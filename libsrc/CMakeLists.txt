@@ -180,7 +180,9 @@ endif()
 ecbuild_add_library(TARGET ${PROJECT_NAME} SOURCES ${${PROJECT_NAME}_src_files})
 
 #Dependencies
-target_link_libraries(${PROJECT_NAME} PUBLIC OpenMP::OpenMP_Fortran)
+if(OPENMP)
+  target_link_libraries(${PROJECT_NAME} PUBLIC OpenMP::OpenMP_Fortran)
+endif()
 target_link_libraries(${PROJECT_NAME} PUBLIC NetCDF::NetCDF_Fortran)
 
 #Fortran module output directory for build and install interfaces
