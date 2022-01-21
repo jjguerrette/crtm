@@ -28,6 +28,7 @@ find_package( NetCDF REQUIRED COMPONENTS Fortran )
 ## Sources
 add_subdirectory( libsrc )
 add_subdirectory( test )
+include(CTest)
 
 ecbuild_install_project( NAME ${PROJECT_NAME} )
 ecbuild_print_summary()
