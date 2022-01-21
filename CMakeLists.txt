@@ -5,7 +5,7 @@
 cmake_minimum_required( VERSION 3.12 )
 project( crtm VERSION 2.3.0 LANGUAGES Fortran )
 
-option(OPENMP "Build FMS with OpenMP support" ON)
+option(OPENMP "Build crtm with OpenMP support" ON)
 
 ## Ecbuild integration
 find_package( ecbuild QUIET )
