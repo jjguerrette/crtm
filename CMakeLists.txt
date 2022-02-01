@@ -5,6 +5,8 @@
 cmake_minimum_required( VERSION 3.12 )
 project( crtm VERSION 2.3.0 LANGUAGES Fortran )
 
+option(OPENMP "Build crtm with OpenMP support" ON)
+
 ## Ecbuild integration
 find_package( ecbuild QUIET )
 include( ecbuild_system NO_POLICY_SCOPE )
@@ -18,12 +20,15 @@ include(GNUInstallDirs)
 
 ## Dependencies
 find_package( jedicmake QUIET )
-find_package( OpenMP COMPONENTS Fortran )
+if(OPENMP)
+  find_package( OpenMP COMPONENTS Fortran )
+endif()
 find_package( NetCDF REQUIRED COMPONENTS Fortran )
 
 ## Sources
 add_subdirectory( libsrc )
 add_subdirectory( test )
+include(CTest)
 
 ecbuild_install_project( NAME ${PROJECT_NAME} )
 ecbuild_print_summary()
