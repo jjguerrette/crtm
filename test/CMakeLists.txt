@@ -55,9 +55,17 @@ else()
   file(MAKE_DIRECTORY ${CRTM_COEFFS_PATH})
   # ECBUILD_DOWNLOAD_BASE_URL env var can be used to force crtm coef to be
   # downloaded from other databases such as S3 instead of DASH
+  # Note that this is set at bundle level and all repos must have their data available 
+  # at ECBUILD_DOWNLOAD_BASE_URL
   if( DEFINED ENV{ECBUILD_DOWNLOAD_BASE_URL} )
     set( ECBUILD_DOWNLOAD_BASE_URL "$ENV{ECBUILD_DOWNLOAD_BASE_URL}/crtm/${CRTM_COEFFS_BRANCH}" )
     message( STATUS "ECBUILD_DOWNLOAD_BASE_URL is set, crtm coeff will be downloaded from ${ECBUILD_DOWNLOAD_BASE_URL}")
+  # ECBUILD_DOWNLOAD_BASE_URL_CRTM can be used to force only crtm coeff to be 
+  # downloaded from other databases such as S3 instead of DASH
+  # Note that this is set only at crtm level and not bundle level
+  elseif( DEFINED ENV{ECBUILD_DOWNLOAD_BASE_URL_CRTM} )
+    set( ECBUILD_DOWNLOAD_BASE_URL "$ENV{ECBUILD_DOWNLOAD_BASE_URL_CRTM}/crtm/${CRTM_COEFFS_BRANCH}" )
+    message( STATUS "ECBUILD_DOWNLOAD_BASE_URL_CRTM is set, crtm coeff will be downloaded from ${ECBUILD_DOWNLOAD_BASE_URL}")
   else()
     set( ECBUILD_DOWNLOAD_BASE_URL https://dashrepo.ucar.edu/api/v1/dataset/147b_jcsda/version/1.0.0/file )
   endif()
