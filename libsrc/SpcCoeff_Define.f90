@@ -9,14 +9,7 @@
 !       Written by:     Paul van Delst, 18-Mar-2002
 !                       paul.vandelst@noaa.gov
 !
-! MODIFICATION HISTORY:
-! =====================
-!
-! Author:          Date:          Description:
-! =======          =====          ============
-! Patrick Stegmann 2021-01-22     Added SpcCoeff_type%PolAngle for the TROPICS
-!                                 instrument polarization scheme in SfcOptics.
-!
+
 MODULE SpcCoeff_Define
 
   ! -----------------
@@ -53,7 +46,6 @@ MODULE SpcCoeff_Define
                                    minus45L_POLARIZATION   , &
                                    VL_MIXED_POLARIZATION   , &
                                    HL_MIXED_POLARIZATION   , &
-                                   CONST_MIXED_POLARIZATION, &
                                    RC_POLARIZATION         , &
                                    LC_POLARIZATION         , &
                                    POLARIZATION_TYPE_NAME
@@ -170,7 +162,6 @@ MODULE SpcCoeff_Define
     ! Channel data arrays
     INTEGER(Long), ALLOCATABLE :: Sensor_Channel(:)              ! L
     INTEGER(Long), ALLOCATABLE :: Polarization(:)                ! L
-    REAL(Double),  ALLOCATABLE :: PolAngle(:)                    ! L, Units: [deg]
     INTEGER(Long), ALLOCATABLE :: Channel_Flag(:)                ! L
     REAL(Double) , ALLOCATABLE :: Frequency(:)                   ! L
     REAL(Double) , ALLOCATABLE :: Wavenumber(:)                  ! L
@@ -318,7 +309,6 @@ CONTAINS
     ! Perform the allocation
     ALLOCATE( SpcCoeff%Sensor_Channel( n_Channels ),             &
               SpcCoeff%Polarization( n_Channels ),               &
-              SpcCoeff%PolAngle( n_Channels ),                   &
               SpcCoeff%Channel_Flag( n_Channels ),               &
               SpcCoeff%Frequency( n_Channels ),                  &
               SpcCoeff%Wavenumber( n_Channels ),                 &
@@ -338,7 +328,6 @@ CONTAINS
     ! ...Arrays
     SpcCoeff%Sensor_Channel             = 0
     SpcCoeff%Polarization               = INVALID_POLARIZATION
-    SpcCoeff%PolAngle                   = ZERO
     SpcCoeff%Channel_Flag               = 0
     SpcCoeff%Frequency                  = ZERO
     SpcCoeff%Wavenumber                 = ZERO
@@ -400,11 +389,6 @@ CONTAINS
       DO n = 1, SpcCoeff%n_Channels
         WRITE(*,'(5x,"Channel ",i0,": ",a)') SpcCoeff%Sensor_Channel(n), &
                                              POLARIZATION_TYPE_NAME(SpcCoeff%Polarization(n))
-      END DO
-      WRITE(*,*) "Fixed Polarization Angle: "
-      DO n = 1, SpcCoeff%n_Channels
-        WRITE(*,'(3x,"Channel ",i0,": ")') SpcCoeff%Sensor_Channel(n)
-        WRITE(*,'(es22.15)') SpcCoeff%PolAngle(n)
       END DO
     END IF
     WRITE(*,'(3x,"Channel_Flag               :")')
@@ -669,7 +653,6 @@ CONTAINS
     ! ...and now extract the subset
     SC_Subset%Sensor_Channel             = SpcCoeff%Sensor_Channel(idx)
     SC_Subset%Polarization               = SpcCoeff%Polarization(idx)
-    SC_Subset%PolAngle                   = SpcCoeff%PolAngle(idx)
     SC_Subset%Channel_Flag               = SpcCoeff%Channel_Flag(idx)
     SC_Subset%Frequency                  = SpcCoeff%Frequency(idx)
     SC_Subset%Wavenumber                 = SpcCoeff%Wavenumber(idx)
@@ -793,8 +776,7 @@ CONTAINS
       ch2 = ch1 + SC_Array(i)%n_Channels - 1
       
       SpcCoeff%Sensor_Channel(ch1:ch2)             = SC_Array(i)%Sensor_Channel            
-      SpcCoeff%Polarization(ch1:ch2)               = SC_Array(i)%Polarization
-      SpcCoeff%PolAngle(ch1:ch2)                   = SC_Array(i)%PolAngle
+      SpcCoeff%Polarization(ch1:ch2)               = SC_Array(i)%Polarization 
       SpcCoeff%Channel_Flag(ch1:ch2)               = SC_Array(i)%Channel_Flag 
       SpcCoeff%Frequency(ch1:ch2)                  = SC_Array(i)%Frequency    
       SpcCoeff%Wavenumber(ch1:ch2)                 = SC_Array(i)%Wavenumber   
@@ -1522,7 +1504,6 @@ CONTAINS
     ! ...Arrays
     IF ( ALL(x%Sensor_Channel                 ==    y%Sensor_Channel            ) .AND. &
          ALL(x%Polarization                   ==    y%Polarization              ) .AND. &
-         ALL(x%PolAngle                       ==    y%PolAngle                  ) .AND. &
          ALL(x%Channel_Flag                   ==    y%Channel_Flag              ) .AND. &
          ALL(x%Frequency                  .EqualTo. y%Frequency                 ) .AND. &
          ALL(x%Wavenumber                 .EqualTo. y%Wavenumber                ) .AND. &

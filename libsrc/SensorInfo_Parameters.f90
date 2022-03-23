@@ -40,7 +40,6 @@ MODULE SensorInfo_Parameters
   PUBLIC :: minus45L_POLARIZATION  
   PUBLIC :: VL_MIXED_POLARIZATION  
   PUBLIC :: HL_MIXED_POLARIZATION  
-  PUBLIC :: CONST_MIXED_POLARIZATION
   PUBLIC :: RC_POLARIZATION        
   PUBLIC :: LC_POLARIZATION        
   PUBLIC :: POLARIZATION_TYPE_NAME
@@ -67,7 +66,7 @@ MODULE SensorInfo_Parameters
                           'Ultraviolet' /)
 
   ! The polarisation flags
-  INTEGER, PARAMETER :: N_POLARIZATION_TYPES    = 13
+  INTEGER, PARAMETER :: N_POLARIZATION_TYPES    = 12
   INTEGER, PARAMETER :: INVALID_POLARIZATION    = 0
   INTEGER, PARAMETER :: UNPOLARIZED             = 1
   INTEGER, PARAMETER :: INTENSITY               = UNPOLARIZED
@@ -83,7 +82,6 @@ MODULE SensorInfo_Parameters
   INTEGER, PARAMETER :: HL_MIXED_POLARIZATION   = 10
   INTEGER, PARAMETER :: RC_POLARIZATION         = 11
   INTEGER, PARAMETER :: LC_POLARIZATION         = 12
-  INTEGER, PARAMETER :: CONST_MIXED_POLARIZATION= 13
   CHARACTER(*), PARAMETER, DIMENSION( 0:N_POLARIZATION_TYPES ) :: &
     POLARIZATION_TYPE_NAME = (/ 'Invalid                                          ', &
                                 'Unpolarized/Intensity/First Stokes component (I) ', &
@@ -97,8 +95,7 @@ MODULE SensorInfo_Parameters
                                 'Vertical polarization at nadir; mixed off nadir  ', &
                                 'Horizontal polarization at nadir; mixed off nadir', &
                                 'Right circular polarization                      ', &
-                                'Left circular polarization                       ', &
-                                'Mixed polarization with constant mixing angle    '/)
+                                'Left circular polarization                       ' /)
 
 
 END MODULE SensorInfo_Parameters
