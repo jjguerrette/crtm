@@ -157,8 +157,8 @@ CONTAINS
 
 
 
-   SUBROUTINE  ATMS_SeaICE_ByTbTs_D(frequency,tb,ts,em_vector)
-   
+   SUBROUTINE  ATMS_SeaICE_ByTbTs_D(frequency,tb_in,ts,em_vector)
+
    !----------------------------------------------------------------------------------------------------------!
    !$$$  subprogram documentation block
    !
@@ -202,19 +202,29 @@ CONTAINS
     INTEGER  :: freq_idx,sice_type
     REAL(fp) :: frequency
     REAL(fp) :: em(nch,ntype), em_vector(:)
-    REAL(fp) :: tb(:),freq(nch)
+    REAL(fp) :: tb_in(:),freq(nch)
     REAL(fp) :: ts, emissivity
     REAL(fp) :: ediff(ntype), X(nwch),Y(nwch),emw(nwch)
     REAL(fp) :: XX,XY,del,dem,dem2,delta,deltb
     INTEGER  :: minlc(1)
     INTEGER  :: windex(nwch)=(/1,2,3,11,12/)             ! window channel index of the library spectrum
-     
+    REAL(fp) :: tb(size(tb_in))
+    INTEGER  :: ich
+
     ! Sixteen candidate snow emissivity spectra
     em = SEAICE_EMISS_ATMS_LIB
     freq = FREQUENCY_ATMS
 
     minlc =minloc(ABS(freq-frequency)); freq_idx=minlc(1)
- 
+
+    ! Rescale negative (missing) values of Tb so they survive being logged
+    tb = tb_in
+    DO ich = 1, size(tb)
+      IF (tb(ich) < 0.0_fp) THEN
+        tb(ich) = -tb(ich)
+      ENDIF
+    ENDDO
+
     !*** IDENTIFY SEAICE TYPE
     sice_type = 4 !default
     ediff=abs(Tb(1)/em(1,:)-Tb(2)/em(2,:))+abs(Tb(2)/em(2,:)-Tb(4)/em(11,:)) 
