@@ -70,16 +70,8 @@
 !
 !  Copyright (C) 2012 Fuzhong Weng and Ming Chen
 !
-!  This program is free software; you can redistribute it and/or modify it under the terms of the GNU
-!  General Public License as published by the Free Software Foundation; either version 2 of the License,
-!  or (at your option) any later version.
+!  Copyright (C) 2022 Joint Center for Satellite Data Assimilation
 !
-!  This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even
-!  the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
-!  License for more details.
-!
-!  You should have received a copy of the GNU General Public License along with this program; if not, write
-!  to the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 !M-
 !--------------------------------------------------------------------------------
 
@@ -157,8 +149,8 @@ CONTAINS
 
 
 
-   SUBROUTINE  ATMS_SeaICE_ByTbTs_D(frequency,tb,ts,em_vector)
-   
+   SUBROUTINE  ATMS_SeaICE_ByTbTs_D(frequency,tb_in,ts,em_vector)
+
    !----------------------------------------------------------------------------------------------------------!
    !$$$  subprogram documentation block
    !
@@ -173,20 +165,20 @@ CONTAINS
    !
    ! input argument list:
    !
-   !     frequency        -  frequency in GHz
-   !     theta            -  local zenith angle (currently, not used here)
-   !     tb[1] ~ tb[5]    -  brightness temperature at five ATMS window channels:
-   !                              tb[1] : 23.8 GHz
-   !                              tb[2] : 31.4 GHz
-   !                              tb[3] : 50.3 GHz
-   !                              tb[4] : 88.2 GHz
-   !                              tb[5] : 165.5 GHz
+   !     frequency              -  frequency in GHz
+   !     theta                  -  local zenith angle (currently, not used here)
+   !     ts                     -  surface temperature in Kelvin
+   !     tb_in[1] ~ tb_in[5]    -  brightness temperature at five ATMS window channels:
+   !                                tb[1] : 23.8 GHz
+   !                                tb[2] : 31.4 GHz
+   !                                tb[3] : 50.3 GHz
+   !                                tb[4] : 88.2 GHz
+   !                                tb[5] : 165.5 GHz
    !
    ! output argument list:
    !
    !      em_vector[1] and [2]  -  emissivity at two polarizations.
    !                              set esv = esh here and will be updated
-   !      snow_type        -  snow type
    !
    !
    ! remarks:
@@ -194,6 +186,15 @@ CONTAINS
    ! program history log:
    !            Ming Chen, IMSG at NOAA/NESDIS/STAR                 date: 2012-04-28
    !
+   ! Modification history:
+   ! =====================
+   !
+   ! Date:                 Author:                      Description:
+   ! =====                 =======                      ============
+   ! 2022-06-21            Dan Holdaway                 Rescale negative (missing) values of Tb 
+   !                                                    so they survive being logged.
+   ! 2022-07-07            Patrick Stegmann             Corrected subroutine input argument list &
+   !                                                    minor cleanup.
    !
    !----------------------------------------------------------------------------------------------------------!
 
@@ -202,23 +203,30 @@ CONTAINS
     INTEGER  :: freq_idx,sice_type
     REAL(fp) :: frequency
     REAL(fp) :: em(nch,ntype), em_vector(:)
-    REAL(fp) :: tb(:),freq(nch)
+    REAL(fp) :: tb_in(:),freq(nch)
     REAL(fp) :: ts, emissivity
     REAL(fp) :: ediff(ntype), X(nwch),Y(nwch),emw(nwch)
     REAL(fp) :: XX,XY,del,dem,dem2,delta,deltb
     INTEGER  :: minlc(1)
     INTEGER  :: windex(nwch)=(/1,2,3,11,12/)             ! window channel index of the library spectrum
-     
+    REAL(fp) :: tb(size(tb_in))
+    INTEGER  :: ich
+
     ! Sixteen candidate snow emissivity spectra
     em = SEAICE_EMISS_ATMS_LIB
     freq = FREQUENCY_ATMS
 
     minlc =minloc(ABS(freq-frequency)); freq_idx=minlc(1)
- 
+
+    ! Rescale negative (missing) values of Tb so they survive being logged
+    tb = tb_in
+    tb = ABS(tb)
+
     !*** IDENTIFY SEAICE TYPE
     sice_type = 4 !default
-    ediff=abs(Tb(1)/em(1,:)-Tb(2)/em(2,:))+abs(Tb(2)/em(2,:)-Tb(4)/em(11,:)) 
-    minlc = minloc(ediff) ; sice_type=minlc(1)
+    ediff=ABS(Tb(1)/em(1,:)-Tb(2)/em(2,:)) + ABS(Tb(2)/em(2,:) - Tb(4)/em(11,:)) 
+    minlc = MINLOC(ediff)
+    sice_type=minlc(1)
 
     !*** adjustment from the library values    
     emw=em(windex,sice_type)
