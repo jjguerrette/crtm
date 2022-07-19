@@ -224,7 +224,7 @@ CONTAINS
 
     !*** IDENTIFY SEAICE TYPE
     sice_type = 4 !default
-    ediff=ABS(Tb(1)/em(1,:)-Tb(2)/em(2,:))+abs(Tb(2)/em(2,:)-Tb(4)/em(11,:)) 
+    ediff=ABS(Tb(1)/em(1,:)-Tb(2)/em(2,:)) + ABS(Tb(2)/em(2,:) - Tb(4)/em(11,:)) 
     minlc = MINLOC(ediff)
     sice_type=minlc(1)
 
