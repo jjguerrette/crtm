@@ -43,7 +43,7 @@ if( DEFINED ENV{LOCAL_PATH_JEDI_TESTFILES})
     set(LOCAL_PATH_JEDI_TESTFILES "$ENV{LOCAL_PATH_JEDI_TESTFILES}")
 endif()
 
-set( CRTM_COEFFS_BRANCH "2.3.0" )
+set( CRTM_COEFFS_BRANCH "jedi_release_2.4.0" )
 
 # If local path to testfiles is defined don't download
 if( DEFINED LOCAL_PATH_JEDI_TESTFILES )
@@ -67,9 +67,9 @@ else()
     set( ECBUILD_DOWNLOAD_BASE_URL "$ENV{ECBUILD_DOWNLOAD_BASE_URL_CRTM}/crtm/${CRTM_COEFFS_BRANCH}" )
     message( STATUS "ECBUILD_DOWNLOAD_BASE_URL_CRTM is set, crtm coeff will be downloaded from ${ECBUILD_DOWNLOAD_BASE_URL}")
   else()
-    set( ECBUILD_DOWNLOAD_BASE_URL https://dashrepo.ucar.edu/api/v1/dataset/147b_jcsda/version/1.0.0/file )
+    set( ECBUILD_DOWNLOAD_BASE_URL https://gdex.ucar.edu/dataset/jedi-skylab/file )
   endif()
-  set( test_files_dirname crtm_coefficients.tar.gz )
+  set( test_files_dirname crtm_coefficients_${CRTM_COEFFS_BRANCH}.tar.gz )
   set( checksum "0")
   message(STATUS "download CRTM coeffs files from: ${ECBUILD_DOWNLOAD_BASE_URL} to ${CRTM_COEFFS_PATH}")
 
